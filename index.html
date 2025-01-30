@@ -152,6 +152,18 @@
             theme: 'default',
             securityLevel: 'strict',
             fontFamily: 'arial',
+            zenuml: {
+                useSequenceDiagram: true,
+            },
+            block: {
+                experimental: true,
+            },
+            packet: {
+                experimental: true,
+            },
+            er: {
+                experimental: true,
+            }
         });
 
         // Render the diagram when the page loads
@@ -207,6 +219,35 @@
         function extractTitleFromMermaidCode(mermaidCode) {
             // Split the code into lines
             const lines = mermaidCode.split('\n');
+            
+            // First check if there's a YAML title
+            const yamlTitleMatch = mermaidCode.match(/title:\s*"([^"]+)"/);
+            if (yamlTitleMatch) {
+                return yamlTitleMatch[1].trim().replace(/[^a-zA-Z0-9\s-_]/g, '');
+            }
+            
+            // Check for ZenUML title
+            const zenUmlTitleMatch = mermaidCode.match(/title\s+([^\n]+)/);
+            if (zenUmlTitleMatch) {
+                return zenUmlTitleMatch[1].trim().replace(/[^a-zA-Z0-9\s-_]/g, '');
+            }
+            
+            // Check the first line for diagram type
+            const firstLine = lines[0].trim().toLowerCase();
+            let diagramType = '';
+            
+            if (firstLine.includes('block')) {
+                diagramType = 'Block-Diagram';
+            } else if (firstLine.includes('zenuml')) {
+                diagramType = 'ZenUML-Diagram';
+            } else if (firstLine.includes('packet')) {
+                diagramType = 'Packet-Diagram';
+            }
+            
+            // If we have identified a diagram type, use it in the filename
+            if (diagramType) {
+                return diagramType;
+            }
             
             // Check the second line if it exists
             if (lines.length > 1) {
