@@ -114,15 +114,16 @@
 
   <script>
     const EXAMPLES = {
-      Flowchart: `flowchart TD\n  A[Start] --> B{Decision?}\n  B -->|Yes| C[Yes path]\n  B -->|No| D[No path]\n  C --> E[End]\n  D --> E` ,
-      Sequence: `sequenceDiagram\n  Alice->>Bob: Hello Bob\n  Bob-->>Alice: Hi Alice` ,
-      Class: `classDiagram\n  Animal <|-- Dog\n  Animal <|-- Cat\n  class Animal {+eat() }\n  class Dog {+bark()}` ,
-      Gantt: `gantt\n  dateFormat  YYYY-MM-DD\n  title Project\n  section A\n  Task1: a1, 2025-06-25, 5d\n  Task2: after a1, 3d` ,
-      ER: `erDiagram\n  CUSTOMER ||--o{ ORDER : places\n  ORDER ||--|{ LINE_ITEM : contains` ,
-      Pie: `pie\n  title Pie example\n  "Cats" : 40\n  "Dogs" : 60` ,
-      Journey: `journey\n  title User Path\n  section Checkout\n    Browse : 5: Me\n    Buy : 3: Me` ,
-      Timeline: `timeline\n  title Evolution\n  2020 : Idea\n  2021 : Built\n  2022 : Growth`
+    Flowchart: `flowchart TD\n  Christmas --> |Get money| Money\n  Money --> Shopping[Go shopping]\n  Shopping --> D{Let me think}\n  D -->|One| Laptop\n  D -->|Two| iPhone\n  D -->|Three| Car` ,
+    Sequence: `sequenceDiagram\n  participant User\n  participant System\n  participant DB\n  User->>System: Request data\n  System->>DB: Query DB\n  DB-->>System: Return data\n  System-->>User: Respond with data` ,
+    Class: `classDiagram\n  class Animal{\n    +String name\n    +int age\n    +speak()\n  }\n  class Dog{\n    +bark()\n  }\n  Animal <|-- Dog` ,
+    Gantt: `gantt\n  title Website Project\n  dateFormat  YYYY-MM-DD\n  section Design\n  Wireframes :done, 2025-05-01, 7d\n  Mockups :active, 2025-05-08, 5d\n  section Development\n  Frontend : 2025-05-13, 10d\n  Backend : 2025-05-13, 10d\n  section Testing\n  QA Testing : 2025-05-24, 5d` ,
+    ER: `erDiagram\n  PERSON ||--o{ ORDER : places\n  ORDER ||--|{ LINE_ITEM : includes\n  CUSTOMER }|..|{ DELIVERY_ADDRESS : uses\n  PRODUCT ||--o{ LINE_ITEM : part of` ,
+    Pie: `pie\n  title Traffic Sources\n  "Organic" : 40\n  "Paid" : 25\n  "Referral" : 20\n  "Social" : 15` ,
+    Journey: `journey\n  title Customer Checkout Journey\n  section Purchase Flow\n    Browse : 4: User\n    Add to Cart : 3: User\n    Checkout : 2: User\n    Pay : 1: User` ,
+    Timeline: `timeline\n  title Product Lifecycle\n  2020 : Ideation\n  2021 : MVP Released\n  2022 : Series A\n  2023 : Scaling Up\n  2024 : Profitability`
     };
+
 
     let editor;
     document.addEventListener("DOMContentLoaded", () => {
