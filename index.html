@@ -98,6 +98,7 @@
       <button onclick="renderMermaid()">Render</button>
       <button class="button-secondary" onclick="downloadDiagram('jpg')">Download JPG</button>
       <button class="button-secondary" onclick="downloadDiagram('png')">Download PNG</button>
+      <button class="button-secondary" onclick="downloadSVG()">Download SVG</button>
       <button onclick="saveToLocalStorage()">💾 Save</button>
       <button onclick="loadFromLocalStorage()">📂 Load</button>
       <button onclick="resetEditor()">♻️ Reset</button>
@@ -183,23 +184,50 @@
     }
 
     function downloadDiagram(format) {
-      const diagram = document.getElementById("mermaid-diagram");
-      html2canvas(diagram, {
+    const diagram = document.getElementById("mermaid-diagram");
+    const code = editor.getValue();
+    const titleMatch = code.match(/title\s*[:=]\s*"?([^\n"]+)/i);
+    const safeTitle = titleMatch ? titleMatch[1].trim().replace(/[^\w\d-_]/g, "_") : 'diagram';
+
+    html2canvas(diagram, {
         scale: 4,
         useCORS: true,
         backgroundColor: '#ffffff',
         windowWidth: diagram.scrollWidth,
         windowHeight: diagram.scrollHeight
-      }).then(canvas => {
+    }).then(canvas => {
         canvas.toBlob(blob => {
-          const link = document.createElement("a");
-          link.href = URL.createObjectURL(blob);
-          link.download = `diagram.${format}`;
-          link.click();
-          URL.revokeObjectURL(link.href);
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${safeTitle}.${format}`;
+        link.click();
+        URL.revokeObjectURL(link.href);
         }, `image/${format}`, 0.95);
-      });
+    });
     }
+
+
+    function downloadSVG() {
+    const svg = document.querySelector('#mermaid-diagram svg');
+    if (!svg) {
+        alert('No diagram rendered to export.');
+        return;
+    }
+    const code = editor.getValue();
+    const titleMatch = code.match(/title\s*[:=]\s*"?([^\n"]+)/i);
+    const safeTitle = titleMatch ? titleMatch[1].trim().replace(/[^\w\d-_]/g, "_") : 'diagram';
+
+    const serializer = new XMLSerializer();
+    const svgBlob = new Blob([serializer.serializeToString(svg)], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(svgBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${safeTitle}.svg`;
+    link.click();
+    URL.revokeObjectURL(url);
+    }
+
+
 
     function debounce(fn, ms) {
       let timer;
