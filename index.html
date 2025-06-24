@@ -115,16 +115,15 @@
 
   <script>
     const EXAMPLES = {
-    Flowchart: `flowchart TD\n  Christmas --> |Get money| Money\n  Money --> Shopping[Go shopping]\n  Shopping --> D{Let me think}\n  D -->|One| Laptop\n  D -->|Two| iPhone\n  D -->|Three| Car` ,
-    Sequence: `sequenceDiagram\n  participant User\n  participant System\n  participant DB\n  User->>System: Request data\n  System->>DB: Query DB\n  DB-->>System: Return data\n  System-->>User: Respond with data` ,
-    Class: `classDiagram\n  class Animal{\n    +String name\n    +int age\n    +speak()\n  }\n  class Dog{\n    +bark()\n  }\n  Animal <|-- Dog` ,
-    Gantt: `gantt\n  title Website Project\n  dateFormat  YYYY-MM-DD\n  section Design\n  Wireframes :done, 2025-05-01, 7d\n  Mockups :active, 2025-05-08, 5d\n  section Development\n  Frontend : 2025-05-13, 10d\n  Backend : 2025-05-13, 10d\n  section Testing\n  QA Testing : 2025-05-24, 5d` ,
-    ER: `erDiagram\n  PERSON ||--o{ ORDER : places\n  ORDER ||--|{ LINE_ITEM : includes\n  CUSTOMER }|..|{ DELIVERY_ADDRESS : uses\n  PRODUCT ||--o{ LINE_ITEM : part of` ,
-    Pie: `pie\n  title Traffic Sources\n  "Organic" : 40\n  "Paid" : 25\n  "Referral" : 20\n  "Social" : 15` ,
-    Journey: `journey\n  title Customer Checkout Journey\n  section Purchase Flow\n    Browse : 4: User\n    Add to Cart : 3: User\n    Checkout : 2: User\n    Pay : 1: User` ,
-    Timeline: `timeline\n  title Product Lifecycle\n  2020 : Ideation\n  2021 : MVP Released\n  2022 : Series A\n  2023 : Scaling Up\n  2024 : Profitability`
+      Flowchart: `flowchart TD\n  Christmas --> |Get money| Money\n  Money --> Shopping[Go shopping]\n  Shopping --> D{Let me think}\n  D -->|One| Laptop\n  D -->|Two| iPhone\n  D -->|Three| Car` ,
+      Sequence: `sequenceDiagram\n  participant User\n  participant System\n  participant DB\n  User->>System: Request data\n  System->>DB: Query DB\n  DB-->>System: Return data\n  System-->>User: Respond with data` ,
+      Class: `classDiagram\n  class Animal{\n    +String name\n    +int age\n    +speak()\n  }\n  class Dog{\n    +bark()\n  }\n  Animal <|-- Dog` ,
+      Gantt: `gantt\n  title Website Project\n  dateFormat  YYYY-MM-DD\n  section Design\n  Wireframes :done, 2025-05-01, 7d\n  Mockups :active, 2025-05-08, 5d\n  section Development\n  Frontend : 2025-05-13, 10d\n  Backend : 2025-05-13, 10d\n  section Testing\n  QA Testing : 2025-05-24, 5d` ,
+      ER: `erDiagram\n  PERSON ||--o{ ORDER : places\n  ORDER ||--|{ LINE_ITEM : includes\n  CUSTOMER }|..|{ DELIVERY_ADDRESS : uses\n  PRODUCT ||--o{ LINE_ITEM : part of` ,
+      Pie: `pie\n  title Traffic Sources\n  "Organic" : 40\n  "Paid" : 25\n  "Referral" : 20\n  "Social" : 15` ,
+      Journey: `journey\n  title Customer Checkout Journey\n  section Purchase Flow\n    Browse : 4: User\n    Add to Cart : 3: User\n    Checkout : 2: User\n    Pay : 1: User` ,
+      Timeline: `timeline\n  title Product Lifecycle\n  2020 : Ideation\n  2021 : MVP Released\n  2022 : Series A\n  2023 : Scaling Up\n  2024 : Profitability`
     };
-
 
     let editor;
     document.addEventListener("DOMContentLoaded", () => {
@@ -184,50 +183,47 @@
     }
 
     function downloadDiagram(format) {
-    const diagram = document.getElementById("mermaid-diagram");
-    const code = editor.getValue();
-    const titleMatch = code.match(/title\s*[:=]\s*"?([^\n"]+)/i);
-    const safeTitle = titleMatch ? titleMatch[1].trim().replace(/[^\w\d-_]/g, "_") : 'diagram';
+      const diagram = document.getElementById("mermaid-diagram");
+      const code = editor.getValue();
+      const titleMatch = code.match(/title\s*[:=]\s*"?([^\n"]+)/i);
+      const safeTitle = titleMatch ? titleMatch[1].trim().replace(/[^\w\d-_]/g, "_") : 'diagram';
 
-    html2canvas(diagram, {
+      html2canvas(diagram, {
         scale: 4,
         useCORS: true,
         backgroundColor: '#ffffff',
         windowWidth: diagram.scrollWidth,
         windowHeight: diagram.scrollHeight
-    }).then(canvas => {
+      }).then(canvas => {
         canvas.toBlob(blob => {
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `${safeTitle}.${format}`;
-        link.click();
-        URL.revokeObjectURL(link.href);
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = `${safeTitle}.${format}`;
+          link.click();
+          URL.revokeObjectURL(link.href);
         }, `image/${format}`, 0.95);
-    });
+      });
     }
-
 
     function downloadSVG() {
-    const svg = document.querySelector('#mermaid-diagram svg');
-    if (!svg) {
+      const svg = document.querySelector('#mermaid-diagram svg');
+      if (!svg) {
         alert('No diagram rendered to export.');
         return;
+      }
+      const code = editor.getValue();
+      const titleMatch = code.match(/title\s*[:=]\s*"?([^\n"]+)/i);
+      const safeTitle = titleMatch ? titleMatch[1].trim().replace(/[^\w\d-_]/g, "_") : 'diagram';
+
+      const serializer = new XMLSerializer();
+      const svgBlob = new Blob([serializer.serializeToString(svg)], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(svgBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${safeTitle}.svg`;
+      link.click();
+      URL.revokeObjectURL(url);
     }
-    const code = editor.getValue();
-    const titleMatch = code.match(/title\s*[:=]\s*"?([^\n"]+)/i);
-    const safeTitle = titleMatch ? titleMatch[1].trim().replace(/[^\w\d-_]/g, "_") : 'diagram';
-
-    const serializer = new XMLSerializer();
-    const svgBlob = new Blob([serializer.serializeToString(svg)], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(svgBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${safeTitle}.svg`;
-    link.click();
-    URL.revokeObjectURL(url);
-    }
-
-
 
     function debounce(fn, ms) {
       let timer;
